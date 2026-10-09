@@ -16,7 +16,7 @@
  *   npm run ollama:prepare
  *   $env:ULTRON_OLLAMA_MODELS_SRC='D:\models'; npm run ollama:prepare
  */
-import { existsSync, mkdirSync, cpSync } from 'fs';
+import { existsSync, mkdirSync, cpSync, readdirSync, statSync, copyFileSync } from 'fs';
 import os from 'os';
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -61,6 +61,34 @@ if (!exe) {
 }
 cpSync(exe, path.join(repoVendor, 'ollama.exe'));
 console.log(`[ollama:prepare] Copied ollama.exe  <- ${exe}`);
+
+// ollama.exe spawns llama-server.exe (from lib/ollama/) at generation time, so the
+// CPU inference libraries MUST ship alongside the binary. We copy only the top-level
+// files of lib/ollama/ (llama-server.exe + the ggml-cpu-*.dll / libllama*.dll set,
+// ~40 MB) and skip the multi-GB GPU backends (cuda_*, rocm_*, vulkan) since the app
+// targets CPU inference. Add those subfolders here if you later need GPU offload.
+const ollamaInstallDir = path.dirname(exe);
+const srcLib = path.join(ollamaInstallDir, 'lib', 'ollama');
+if (existsSync(srcLib)) {
+  const destLib = path.join(repoVendor, 'lib', 'ollama');
+  mkdirSync(destLib, { recursive: true });
+  let copied = 0;
+  for (const entry of readdirSync(srcLib)) {
+    const from = path.join(srcLib, entry);
+    // Copy files only; skip GPU backend subfolders to keep the bundle lean.
+    if (statSync(from).isFile()) {
+      copyFileSync(from, path.join(destLib, entry));
+      copied += 1;
+    }
+  }
+  console.log(
+    `[ollama:prepare] Copied ${copied} CPU inference libs (incl. llama-server.exe) <- ${srcLib} (GPU backends skipped)`,
+  );
+} else {
+  console.warn(
+    `[ollama:prepare] No lib/ollama folder next to ollama.exe (${srcLib}). Generation will fail: llama-server.exe is missing.`,
+  );
+}
 
 const store = findModelStore();
 if (!store) {

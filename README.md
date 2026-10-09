@@ -51,6 +51,9 @@ whole `vendor/` tree is **git-ignored** (too large for the repo), so it is **not
 and travels with the installer instead:
 
 - `ollama.exe` — a self-contained Ollama runtime (~26 MB).
+- `lib/ollama/` — the CPU inference libraries, including `llama-server.exe`, that
+  `ollama.exe` spawns to actually run a model (~40 MB). **Without these, the server starts
+  and lists models but every generation fails.**
 - `models/` — the model store for `mistral` (~4 GB).
 
 Seed it once on a machine that already has the model, so it can be bundled for
