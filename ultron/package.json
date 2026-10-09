@@ -1,0 +1,92 @@
+{
+  "name": "terminaltron-t001",
+  "version": "0.1.0",
+  "private": true,
+  "description": "TerminalTron-T001 enterprise AI desktop application for Windows.",
+  "main": "dist/main/main/main.js",
+  "scripts": {
+    "dev:backend": "cross-env NODE_ENV=development ts-node-dev --respawn --transpile-only --project tsconfig.main.json src/backend/server.ts",
+    "dev:main": "cross-env NODE_ENV=development tsc -p tsconfig.main.json --watch",
+    "dev:renderer": "cross-env NODE_ENV=development vite",
+    "dev:electron": "cross-env NODE_ENV=development wait-on http://localhost:5173 && electron .",
+    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:main\" \"npm run dev:renderer\" \"npm run dev:electron\"",
+    "build:renderer": "vite build",
+    "build:main": "tsc -p tsconfig.main.json",
+    "build": "npm run build:renderer && npm run build:main",
+    "start": "electron .",
+    "package": "npm run build && electron-builder --win nsis",
+    "prisma:generate": "prisma generate",
+    "prisma:migrate": "prisma migrate dev --name init",
+    "prisma:studio": "prisma studio"
+  },
+  "dependencies": {
+    "@fastify/cors": "^10.0.0",
+    "@fastify/jwt": "^7.1.0",
+    "@langchain/core": "^1.2.5",
+    "@langchain/ollama": "^1.3.0",
+    "@prisma/client": "^5.18.0",
+    "axios": "^1.7.0",
+    "dotenv": "^16.4.5",
+    "electron": "^25.0.0",
+    "electron-is-dev": "^2.0.0",
+    "electron-updater": "^6.3.9",
+    "fastify": "^5.1.0",
+    "langchain": "^1.5.5",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "react-hot-toast": "^2.4.1",
+    "react-redux": "^9.1.0",
+    "react-router-dom": "^7.3.0",
+    "recharts": "^2.11.0",
+    "socket.io": "^4.7.3",
+    "socket.io-client": "^4.7.3",
+    "systeminformation": "^5.22.0",
+    "winston": "^3.14.2"
+  },
+  "devDependencies": {
+    "@types/node": "^22.13.10",
+    "@types/react": "^19.0.11",
+    "@types/react-dom": "^19.0.4",
+    "@vitejs/plugin-react": "^4.3.1",
+    "concurrently": "^9.1.2",
+    "cross-env": "^7.0.3",
+    "electron-builder": "^25.1.8",
+    "prisma": "^5.18.0",
+    "ts-node": "^10.9.2",
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^5.8.2",
+    "vite": "^5.4.1",
+    "wait-on": "^8.0.1"
+  },
+  "build": {
+    "appId": "com.terminaltront001.desktop",
+    "productName": "TerminalTron-T001",
+    "files": [
+      "dist/**/*",
+      "package.json"
+    ],
+    "extraResources": [
+      {
+        "from": "vendor/whisper",
+        "to": "vendor/whisper"
+      },
+      {
+        "from": "assets/icon.ico",
+        "to": "assets/icon.ico"
+      }
+    ],
+    "directories": {
+      "output": "release/build"
+    },
+    "win": {
+      "target": ["nsis"],
+      "icon": "assets/icons/icon-256x256.png"
+    },
+    "nsis": {
+      "installerIcon": "assets/icon.ico",
+      "uninstallerIcon": "assets/icon.ico",
+      "installerHeaderIcon": "assets/icon.ico",
+      "shortcutName": "TerminalTron-T001"
+    }
+  }
+}
