@@ -26,10 +26,12 @@ TerminalTron-T001/
 ## Prerequisites
 
 - Node.js 18 or newer and npm
-- [Ollama](https://ollama.com/) running locally, with a model pulled, for example:
-  ```bash
-  ollama pull mistral
-  ```
+
+**AI runs fully offline, no install required.** TerminalTron bundles its own Ollama
+runtime and the `mistral` model, so end users need nothing extra. On startup the app
+reuses a local Ollama if one is already running, otherwise it launches the bundled
+`vendor/ollama/ollama.exe` with a private model store. No internet connection is needed
+at runtime.
 
 ## Setup
 
@@ -39,7 +41,33 @@ All commands run from `ultron/`.
 cd ultron
 npm install
 npx prisma generate
+npm run ollama:prepare   # one-time, on the build machine only (see below)
 ```
+
+## Bundled offline AI (Ollama + model)
+
+`vendor/ollama/` holds everything needed for offline chat. Like `vendor/whisper/`, the
+whole `vendor/` tree is **git-ignored** (too large for the repo), so it is **not** committed
+and travels with the installer instead:
+
+- `ollama.exe` — a self-contained Ollama runtime (~26 MB).
+- `lib/ollama/` — the CPU inference libraries, including `llama-server.exe`, that
+  `ollama.exe` spawns to actually run a model (~40 MB). **Without these, the server starts
+  and lists models but every generation fails.**
+- `models/` — the model store for `mistral` (~4 GB).
+
+Seed it once on a machine that already has the model, so it can be bundled for
+distribution:
+
+```bash
+npm run ollama:prepare
+```
+
+That copies `ollama.exe` and your `~/.ollama/models` store into `vendor/ollama/`. To pull
+a different model, run `ollama pull <name>` first (or point `$env:ULTRON_OLLAMA_MODELS_SRC`
+at an existing model folder). Check what the app resolved at runtime via
+`GET /api/health/ollama`, which reports whether it reused an existing Ollama, started the
+bundled one, and whether the model store is present.
 
 Create your environment file from the template:
 

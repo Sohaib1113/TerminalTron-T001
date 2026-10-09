@@ -3,10 +3,28 @@ import cors from '@fastify/cors';
 import dotenv from 'dotenv';
 import routes from './routes';
 import monitoringService from './services/monitoringService';
+import { ollamaRuntime } from './services/ollamaRuntime';
 
 dotenv.config();
 
 const app = Fastify({ logger: true });
+
+// Bring up the bundled (offline) Ollama runtime before serving requests, so the
+// first chat message has a live model. Reuses an existing install if present.
+ollamaRuntime
+  .ensureRunning()
+  .then((status) => {
+    if (status.running) {
+      app.log.info(
+        `Ollama ready on ${status.baseUrl} (${status.reused ? 'reused existing' : 'bundled'}${status.modelPresent ? '' : ', model store missing'})`,
+      );
+    } else {
+      app.log.warn(`Ollama not running: ${status.error ?? 'unknown'}`);
+    }
+  })
+  .catch((error) => {
+    app.log.error('Failed to start Ollama runtime', error);
+  });
 
 const startServer = async () => {
   await app.register(cors, {

@@ -22,6 +22,9 @@ yarn-error.log*
 # Local speech-to-text binaries (large, not committed)
 vendor/
 
+# The whole vendor/ tree above already excludes the bundled Ollama runtime and
+# model store (ultron/vendor/ollama/). Seed them with `npm run ollama:prepare`.
+
 # Local databases
 *.db
 *.db-journal
