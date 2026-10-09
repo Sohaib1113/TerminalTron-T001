@@ -1,0 +1,176 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String     @id @default(cuid())
+  username  String     @unique
+  email     String?    @unique
+  password  String?
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+
+  tasks        Task[]
+  conversations Conversation[]
+  alerts       MonitoringAlert[]
+  settings     AppSettings?
+  automationTasks AutomationTask[]
+  automationLogs  AutomationAuditLog[]
+
+  @@map("users")
+}
+
+model Task {
+  id            String   @id @default(cuid())
+  userId        String
+  title         String
+  description   String?
+  status        String   @default("pending") // pending, in-progress, completed, on-hold
+  priority      String   @default("medium") // low, medium, high, critical
+  dueDate       DateTime?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  parentTaskId  String?
+  tags          String?  // JSON stringified array
+
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  parent        Task?    @relation("ParentChild", fields: [parentTaskId], references: [id], onDelete: Cascade)
+  subtasks      Task[]   @relation("ParentChild")
+
+  @@index([userId])
+  @@index([parentTaskId])
+  @@map("tasks")
+}
+
+model ConversationMessage {
+  id             String   @id @default(cuid())
+  conversationId String
+  role           String   // user, assistant, system
+  content        String
+  timestamp      DateTime @default(now())
+  tokens         Int?
+
+  conversation Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+
+  @@index([conversationId])
+  @@map("conversation_messages")
+}
+
+model Conversation {
+  id          String   @id @default(cuid())
+  userId      String
+  title       String
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  contextData String?  // JSON stringified object
+
+  user     User                    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  messages ConversationMessage[]
+
+  @@index([userId])
+  @@map("conversations")
+}
+
+model SystemMetrics {
+  id            String   @id @default(cuid())
+  timestamp     DateTime @default(now())
+  cpuUsage      Float    // Percentage
+  memoryUsage   Float    // Percentage
+  diskUsage     Float    // Percentage
+  processCount  Int
+
+  @@map("system_metrics")
+}
+
+model MonitoringAlert {
+  id        String   @id @default(cuid())
+  userId    String
+  type      String   // cpu, memory, disk, error, task-completion
+  severity  String   // info, warning, critical
+  message   String
+  timestamp DateTime @default(now())
+  read      Boolean  @default(false)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([timestamp])
+  @@map("monitoring_alerts")
+}
+
+model AppSettings {
+  id                   String   @id @default(cuid())
+  userId               String   @unique
+  theme                String   @default("light") // light, dark, auto
+  autoStart            Boolean  @default(false)
+  notificationsEnabled Boolean  @default(true)
+  soundEnabled         Boolean  @default(true)
+
+  // LLM Settings
+  llmProvider          String   @default("ollama") // ollama, openai, anthropic, huggingface
+  llmModel             String   @default("mistral") // Default Mistral 7B
+  llmApiKey            String?
+  ollamaBaseUrl        String   @default("http://localhost:11434")
+
+  // Monitoring
+  monitoringEnabled    Boolean  @default(true)
+  monitoringInterval   Int      @default(5000) // milliseconds
+
+  // UI Preferences
+  sidebarCollapsed     Boolean  @default(false)
+  defaultView          String   @default("dashboard") // dashboard, chat, tasks
+
+  user                 User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("app_settings")
+}
+
+model AutomationTask {
+  id          String   @id @default(cuid())
+  userId      String
+  action      String   // open_url, youtube_search, youtube_play, web_search, open_app, run_command
+  target      String   // url, query, or app identifier
+  title       String
+  detail      String?
+  status      String   @default("pending-approval") // pending-approval, approved, running, completed, denied, failed
+  result      String?
+  error       String?
+  source      String   @default("chat") // chat, manual, api
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  completedAt DateTime?
+
+  user User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
+  logs AutomationAuditLog[]
+
+  @@index([userId])
+  @@index([status])
+  @@map("automation_tasks")
+}
+
+model AutomationAuditLog {
+  id        String   @id @default(cuid())
+  userId    String
+  taskId    String?
+  action    String
+  target    String?
+  status    String   // requested, approved, denied, completed, failed
+  message   String?
+  timestamp DateTime @default(now())
+
+  user User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  task AutomationTask? @relation(fields: [taskId], references: [id], onDelete: SetNull)
+
+  @@index([userId])
+  @@index([timestamp])
+  @@map("automation_audit_logs")
+}

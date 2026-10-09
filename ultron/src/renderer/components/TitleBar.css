@@ -1,0 +1,103 @@
+.title-bar {
+  position: relative;
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  height: 36px;
+  padding: 0 6px 0 14px;
+  background: linear-gradient(180deg, #0c0b08 0%, #06060a 100%);
+  -webkit-app-region: drag;
+  user-select: none;
+  z-index: 5;
+}
+
+.title-bar::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(245, 197, 24, 0.55) 12%,
+    rgba(245, 197, 24, 0.28) 55%,
+    rgba(245, 197, 24, 0.62) 100%
+  );
+}
+
+.title-bar-brand {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.title-bar-brand .brand-logo {
+  --emblem-size: 20px;
+}
+
+.title-bar-wordmark {
+  font-family: var(--font-display);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.34em;
+  text-transform: uppercase;
+  color: var(--gold-bright);
+  text-shadow: 0 0 12px rgba(245, 197, 24, 0.45);
+}
+
+.title-bar-menu {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  -webkit-app-region: no-drag;
+}
+
+.title-menu-item {
+  border: none;
+  background: none;
+  color: var(--ink-dim);
+  font-family: inherit;
+  font-size: 0.76rem;
+  letter-spacing: 0.02em;
+  padding: 5px 10px;
+  cursor: pointer;
+  transition: color 0.15s ease, background 0.15s ease;
+}
+
+.title-menu-item:hover {
+  color: var(--gold-bright);
+  background: rgba(245, 197, 24, 0.08);
+}
+
+.title-bar-controls {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  margin-left: auto;
+  -webkit-app-region: no-drag;
+}
+
+.window-control {
+  width: 36px;
+  height: 26px;
+  display: grid;
+  place-items: center;
+  border: none;
+  background: none;
+  color: var(--ink-dim);
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.window-control:hover {
+  background: rgba(245, 197, 24, 0.14);
+  color: #fff;
+}
+
+.window-control.close:hover {
+  background: #e02b1d;
+  color: #fff;
+}

@@ -1,0 +1,75 @@
+:root {
+  /* ---- TerminalTron-T001 HUD palette ---- */
+  --gold: #f5c518;
+  --gold-bright: #ffd75e;
+  --gold-deep: #b8860b;
+  --gold-ring: rgba(245, 197, 24, 0.42);
+  --gold-faint: rgba(245, 197, 24, 0.12);
+  --panel-top: rgba(24, 21, 12, 0.94);
+  --panel-bottom: rgba(8, 8, 10, 0.97);
+  --ink: #f6eed6;
+  --ink-dim: rgba(246, 238, 214, 0.62);
+  --ink-faint: rgba(246, 238, 214, 0.34);
+  --void: #050506;
+  --danger: #ff5f57;
+  --ok: #7ddc6b;
+
+  /* ---- Chamfered HUD corners ---- */
+  --cut-xl: polygon(30px 0, 100% 0, 100% calc(100% - 30px), calc(100% - 30px) 100%, 0 100%, 0 30px);
+  --cut-lg: polygon(22px 0, 100% 0, 100% calc(100% - 22px), calc(100% - 22px) 100%, 0 100%, 0 22px);
+  --cut-md: polygon(14px 0, 100% 0, 100% calc(100% - 14px), calc(100% - 14px) 100%, 0 100%, 0 14px);
+  --cut-sm: polygon(9px 0, 100% 0, 100% calc(100% - 9px), calc(100% - 9px) 100%, 0 100%, 0 9px);
+
+  --font-ui: 'Bahnschrift', 'Segoe UI Variable Text', 'Segoe UI', system-ui, sans-serif;
+  --font-display: 'Bahnschrift SemiBold', 'Bahnschrift', 'Segoe UI Semibold', 'Segoe UI', sans-serif;
+  --font-tech: 'Consolas', 'Cascadia Mono', monospace;
+
+  color-scheme: dark;
+}
+
+html,
+body,
+#root {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  font-family: var(--font-ui);
+  background: var(--void);
+  color: var(--ink);
+  overflow: hidden;
+}
+
+body {
+  background:
+    radial-gradient(circle at 22% -10%, rgba(245, 197, 24, 0.14), transparent 46%),
+    radial-gradient(circle at 88% 108%, rgba(245, 197, 24, 0.1), transparent 42%),
+    linear-gradient(180deg, #08080a 0%, #050506 55%, #0a0a08 100%);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+::selection {
+  background: rgba(245, 197, 24, 0.32);
+  color: #fff;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(245, 197, 24, 0.05);
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, rgba(245, 197, 24, 0.55), rgba(245, 197, 24, 0.18));
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(245, 197, 24, 0.7);
+}
+
