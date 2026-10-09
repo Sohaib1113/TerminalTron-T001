@@ -6,7 +6,10 @@ import prisma from '../db';
 dotenv.config();
 
 const DEFAULT_LLM_PROVIDER = 'ollama';
-const DEFAULT_LLM_MODEL = 'mistral';
+// Small, fast model tuned for CPU-only inference. qwen2.5:1.5b generates ~3x
+// faster than the 7B mistral (measured ~24 vs ~7 tok/s on CPU), which keeps chat
+// replies snappy and lets the streamed voice start speaking sooner.
+const DEFAULT_LLM_MODEL = 'qwen2.5:1.5b';
 const DEFAULT_OLLAMA_BASE_URL = 'http://localhost:11434';
 
 /**
@@ -206,7 +209,10 @@ const buildOllamaModel = (settings: LlmSettings, options?: GenerateOptions) =>
     model: settings.model,
     baseUrl: settings.baseUrl,
     temperature: options?.temperature ?? 0.7,
-    numPredict: options?.maxTokens ?? 512,
+    // Keep replies concise for CPU speed and snappy streaming voice. 220 tokens
+    // is a short, complete answer — long enough to be useful, short enough that
+    // generation finishes in a few seconds and speech starts almost immediately.
+    numPredict: options?.maxTokens ?? 220,
   });
 
 const buildMessages = (prompt: string, options?: GenerateOptions) => {

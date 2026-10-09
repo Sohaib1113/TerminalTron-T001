@@ -36,7 +36,7 @@ export interface OllamaRuntimeStatus {
 }
 
 const DEFAULT_PORT = 11434;
-const DEFAULT_MODEL = 'mistral';
+const DEFAULT_MODEL = 'qwen2.5:1.5b';
 
 /** Walk up from this file, CWD and Electron resources to locate `vendor/ollama`. */
 const resolveVendorDir = (): string | null => {
