@@ -18,7 +18,8 @@
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev --name init",
     "prisma:studio": "prisma studio",
-    "ollama:prepare": "node scripts/prepare-ollama.mjs"
+    "ollama:prepare": "node scripts/prepare-ollama.mjs",
+    "tts:prepare": "node scripts/prepare-tts.mjs"
   },
   "dependencies": {
     "@fastify/cors": "^10.0.0",
