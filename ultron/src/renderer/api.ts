@@ -235,6 +235,51 @@ export const transcribeAudio = (audioBase64: string) =>
     body: JSON.stringify({ audio: audioBase64 }),
   });
 
+/** Cloned-voice (XTTS-v2) runtime status. */
+export const getTtsStatus = () => fetchApi<{ ready: boolean; device?: string; error?: string }>('/health/tts');
+
+/**
+ * Synthesize `text` in the cloned cinematic voice. Returns an object URL for the
+ * WAV, or null when the runtime is unavailable (caller falls back to Web Speech).
+ *
+ * `speed` defaults to 1.0 (natural pace — the exact reference voice). Only raise
+ * it if you explicitly want faster-than-natural speech; it does alter timbre.
+ */
+export const speakCloned = async (text: string, speed = 1.0): Promise<string | null> => {
+  try {
+    const response = await fetch(`${API_BASE}/health/tts/speak`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text, speed }),
+    });
+    if (!response.ok) {
+      return null;
+    }
+    const blob = await response.blob();
+    return URL.createObjectURL(blob);
+  } catch {
+    return null;
+  }
+};
+
+/**
+ * Stream Ultron's cloned voice at natural speed (the reference voice). Returns
+ * the raw Response (chunked 16-bit PCM, 24kHz mono) so playback can begin on the
+ * first chunk (~4s) instead of after the whole reply is synthesized (~15s).
+ */
+export const streamClonedVoice = async (text: string, speed = 1.0): Promise<Response | null> => {
+  try {
+    const response = await fetch(`${API_BASE}/health/tts/stream`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text, speed }),
+    });
+    return response.ok && response.body ? response : null;
+  } catch {
+    return null;
+  }
+};
+
 export interface Task {
   id: string;
   userId: string;

@@ -16,6 +16,9 @@ import {
   isVoiceEnabled,
   setVoiceEnabled,
   speakUltron,
+  startStreamingSpeech,
+  pushSpeechChunk,
+  endStreamingSpeech,
   stopUltronSpeech,
 } from '../voice';
 import { PcmCapture, bytesToBase64, encodeWav16k, startPcmCapture } from '../mic';
@@ -585,6 +588,14 @@ const measureLevel = () => {
 
     let targetConversationId = activeId;
     let automationMessage = '';
+    // Speak sentence-by-sentence as the reply streams, so audio starts within
+    // seconds instead of after the whole reply is generated + synthesized.
+    if (voiceOnRef.current) {
+      startStreamingSpeech({
+        onStart: () => setSpeaking(true),
+        onEnd: () => setSpeaking(false),
+      });
+    }
 
     try {
       await streamPrompt(value, activeId ?? undefined, {
@@ -595,6 +606,9 @@ const measureLevel = () => {
         onChunk: (text) => {
           streamedRef.current += text;
           setStreamingText(streamedRef.current);
+          if (voiceOnRef.current) {
+            pushSpeechChunk(text);
+          }
         },
         onAutomation: (payload) => {
           setPendingAutomation(payload.task);
@@ -612,10 +626,19 @@ const measureLevel = () => {
       if (targetConversationId) {
         await loadConversation(targetConversationId);
       }
-      // Ultron speaks either the streamed reply or the approval prompt.
-      const reply = streamedRef.current || automationMessage;
-      if (reply) {
-        speak(reply);
+      // Ultron already spoke the streamed reply sentence-by-sentence. If nothing
+      // streamed (e.g. an automation approval prompt), speak that message now.
+      if (voiceOnRef.current) {
+        if (streamedRef.current.trim()) {
+          endStreamingSpeech();
+        } else if (automationMessage) {
+          speakUltron(automationMessage, {
+            onStart: () => setSpeaking(true),
+            onEnd: () => setSpeaking(false),
+          });
+        } else {
+          endStreamingSpeech();
+        }
       }
     }
   };
