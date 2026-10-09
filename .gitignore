@@ -1,0 +1,45 @@
+# Dependencies
+node_modules/
+
+# Environment / secrets (never commit real keys)
+.env
+.env.*
+!.env.example
+
+# Logs and runtime data
+logs/
+*.log
+*.err
+*.pid
+*.seed
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Local databases
+*.db
+*.db-journal
+*.sqlite
+
+# Build output
+dist/
+build/
+out/
+release/app/dist
+release/build
+.esbuild
+coverage/
+.eslintcache
+
+# Cached webpack dll output
+.erb/dll/
+
+# Generated type declarations
+*.css.d.ts
+*.sass.d.ts
+*.scss.d.ts
+
+# Editor and OS metadata
+.idea/
+.DS_Store
+Thumbs.db

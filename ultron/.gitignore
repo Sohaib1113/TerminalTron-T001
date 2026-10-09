@@ -1,0 +1,42 @@
+# Logs
+logs
+*.log
+npm-debug.log.*
+yarn-debug.log.*
+yarn-error.log.*
+
+# Runtime data
+pids
+*.pid
+*.seed
+
+# Environment / secrets
+# .env holds real API keys and JWT secrets - never commit it.
+.env
+.env.*
+!.env.example
+
+# Dependency directory
+node_modules/
+
+# Build output
+dist/
+release/app/dist
+release/build
+.esbuild
+.eslintcache
+coverage
+
+# Cached webpack dll output (legacy .erb build)
+.erb/dll
+.erb/dll/
+
+# Editor and OS metadata
+.idea
+.DS_Store
+Thumbs.db
+
+# Generated type declarations
+*.css.d.ts
+*.sass.d.ts
+*.scss.d.ts
