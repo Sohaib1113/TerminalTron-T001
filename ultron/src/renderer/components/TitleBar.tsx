@@ -1,5 +1,5 @@
 import { MouseEvent, useEffect, useState } from 'react';
-import logo from '../assets/terminatron-logo.png';
+import HoloEmblem from './HoloEmblem';
 import './TitleBar.css';
 
 const MENUS = ['File', 'Edit', 'View', 'Window', 'Help'];
@@ -39,7 +39,7 @@ export default function TitleBar() {
   return (
     <header className="title-bar">
       <div className="title-bar-brand">
-        <img className="brand-logo" src={logo} alt="" aria-hidden="true" />
+        <HoloEmblem size={28} className="brand-logo title-emblem" />
         <span className="title-bar-wordmark">TerminalTron-T001</span>
       </div>
 

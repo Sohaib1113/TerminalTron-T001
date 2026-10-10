@@ -50,6 +50,28 @@
   -webkit-user-drag: none;
 }
 
+/* HoloEmblem canvas overrides: inline width/height win, but make sure the
+   canvas is visible, crisp and glowing at every brand spot. */
+canvas.brand-logo.title-emblem {
+  width: 28px !important;
+  height: 28px !important;
+  --emblem-size: 28px;
+  filter: drop-shadow(0 0 10px rgba(255, 215, 94, 0.9));
+}
+canvas.brand-logo.side-emblem {
+  width: 44px !important;
+  height: 44px !important;
+  --emblem-size: 44px;
+  filter: drop-shadow(0 0 12px rgba(255, 215, 94, 0.85));
+}
+canvas.foot-emblem {
+  flex: 0 0 auto;
+  width: 58px !important;
+  height: 58px !important;
+  display: inline-block;
+  filter: drop-shadow(0 0 12px rgba(255, 215, 94, 0.8));
+}
+
 /* ---- Shared chamfered HUD frame ---- */
 .sidebar,
 .metric-card,

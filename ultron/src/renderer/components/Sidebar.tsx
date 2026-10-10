@@ -1,6 +1,6 @@
 import { ReactNode } from 'react';
 import { NavLink } from 'react-router-dom';
-import logo from '../assets/terminatron-logo.png';
+import HoloEmblem from './HoloEmblem';
 import './Sidebar.css';
 
 const ChatIcon = (
@@ -81,7 +81,7 @@ export default function Sidebar() {
   return (
     <aside className="sidebar">
       <div className="sidebar-brand">
-        <img className="brand-logo" src={logo} alt="" aria-hidden="true" />
+        <HoloEmblem size={44} className="brand-logo side-emblem" />
         <span className="sidebar-brand-text">
           <strong>TerminalTron-T001</strong>
           <em>AI Assistant</em>
@@ -105,9 +105,7 @@ export default function Sidebar() {
       </nav>
 
       <div className="sidebar-foot">
-        <span className="foot-hex" aria-hidden="true">
-          <span className="foot-hex-core" />
-        </span>
+        <HoloEmblem size={58} className="foot-emblem" />
         <p className="foot-motto">
           Better
           <br />

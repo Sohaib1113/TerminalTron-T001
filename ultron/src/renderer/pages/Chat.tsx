@@ -22,7 +22,7 @@ import {
   stopUltronSpeech,
 } from '../voice';
 import { PcmCapture, bytesToBase64, encodeWav16k, startPcmCapture } from '../mic';
-import logo from '../assets/terminatron-logo.png';
+import HoloEmblem from '../components/HoloEmblem';
 
 type OrbMode = 'idle' | 'typing' | 'listening' | 'streaming' | 'speaking';
 
@@ -833,7 +833,7 @@ const measureLevel = () => {
                   className="orb-core"
                   style={{ transform: `scale(${1 + voiceLevel * 0.24})` }}
                 >
-                  <img className="orb-logo" src={logo} alt="" aria-hidden="true" />
+                  <HoloEmblem size={70} animate className="orb-logo" />
                 </span>
               </span>
             </div>
